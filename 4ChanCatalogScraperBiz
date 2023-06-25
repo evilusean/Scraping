@@ -1,0 +1,54 @@
+# import all outside modules for program
+
+import requests
+import json
+from bs4 import BeautifulSoup
+import csv
+import os
+# This is the url with java script we want to parser | get html from site
+
+url = 'https://boards.4channel.org/biz/catalog'
+response = requests.get(url)
+headers = response.headers
+body = response.headers
+body = response.text[:6000]
+
+# This is html parser to help find the script TAG
+
+html = BeautifulSoup(response.text, 'html.parser')
+
+# This finds all the script text and information. Gets only text and then strips it down to delete white space
+# we are only getting data from the 2 script tag starting with 0 being the first tag
+
+script = html.find_all('script')[2].string.strip()[143:-122]
+atag = html.find_all('a')
+img = html.find_all('img')
+
+#loads json data from script
+
+data = json.loads(script)
+# This prints the Webpage title and script in two formats
+
+
+print(html.title)
+print(script)
+print(data)
+print(atag)
+print(img)
+
+# this writes the file as .txt with added number
+
+filename = "4chan_biz"
+
+i = 0
+while os.path.exists(f"{filename}{i}.txt"):
+i +=1
+# this writes the data to file format and csv format
+
+with open(f"{filename}{i}.txt", 'w') as file:
+for threads in script:
+text_only_data = threads
+file.write(text_only_data)
+
+
+#file.close()
